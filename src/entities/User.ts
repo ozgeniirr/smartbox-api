@@ -19,8 +19,8 @@ export class User {
   @Column()
   password!: string;
 
-  @Column({ default: 'user' }) // admin, courier, user
-  role!: string;
+  @Column({ default: "user" }) 
+  role!: "admin" | "courier" | "user";
 
   @OneToMany(() => Package, (pkg) => pkg.user)
   packages!: Package[];

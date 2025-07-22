@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { AuthService } from "./Auth.service";
-import { RegisterDto } from "@/validators/AuthDto"
-import { LoginDto } from "@/validators/AuthDto";
+import { RegisterDto } from "@/Dtos/AuthDto"
+import { LoginDto } from "@/Dtos/AuthDto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 

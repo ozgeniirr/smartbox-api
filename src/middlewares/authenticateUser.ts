@@ -11,10 +11,12 @@ export function authenticateUser ( req: Request, res:Response, next: NextFunctio
      const token = authHeader.split(" ")[1];
 
      try{
-        const verify = verifyToken(token);
-        (req as any).email = verify.email,
-        (req as any).userId = verify.userId,
-        (req as any).role = verify.role
+        const decoded = verifyToken(token);
+        (req as any).user = decoded;
+        (req as any).email = decoded.email;
+        (req as any).userId = decoded.userId;
+        (req as any).role = decoded.role;
+
 
         next();
 
