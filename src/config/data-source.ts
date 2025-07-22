@@ -1,17 +1,17 @@
-import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { User } from '../entities/User';
-import { SmartBox } from '../entities/SmartBox';
-import { Package } from '../entities/Package';
+import { User } from '@/entities/User';
+import { Package } from '@/entities/Package';
+import { SmartBox } from '@/entities/SmartBox';
+import 'dotenv/config';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'postgres',
-  password: 'Bestnet@2002',
-  database: 'smartbox_db',
-  synchronize: true, 
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT || '5432'),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  entities: [User, Package, SmartBox],
+  synchronize: true,
   logging: false,
-  entities: [User, SmartBox, Package],
 });

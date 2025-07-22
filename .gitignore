@@ -1,0 +1,17 @@
+# node_modules (kütüphaneler)
+node_modules/
+
+# derlenmiş dosyalar (eğer ts derlemesi varsa)
+dist/
+
+# dotenv dosyaları (gizli veriler)
+.env
+.env.*
+
+# MacOS işletim sistemi dosyası
+.DS_Store
+
+# log dosyaları
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
