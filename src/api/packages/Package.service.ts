@@ -31,6 +31,9 @@ export class PackageService {
             throw new Error("SMARTBOX_FULL");
         }
 
+        smartbox.currentLoad = currentPackageCount + 1;
+        await this.smartboxRepository.save(smartbox);
+
 
         const code = uuidv4(); 
 
@@ -38,7 +41,7 @@ export class PackageService {
             sender,
             content,
             user:user,
-            smartBox:{id:smartboxId},
+            smartBox:smartbox,
             qrCode: code
 
         });
@@ -56,6 +59,45 @@ export class PackageService {
         return {message:"Başarıyla silindi."}
     }
 
+
+    async pickPackage(packageId:number, currentUserId:number){
+        const package3 = await this.packageRepository.findOne({where: {
+            id: packageId},
+            relations:["user", "smartBox"]
+        });
+
+        if(!package3){
+            throw new Error("PACKAGE_NOT_FOUND")
+        }else if(package3.isPickedUp===true){
+            throw new Error("PACKAGE_ALREADY_PICKED")
+
+        }else if(package3.user.id!==currentUserId){
+            throw new Error("UNAUTHORIZED_PACKAGE_ACCESS")
+        }
+        package3.isPickedUp = true;
+        package3.smartBox.currentLoad = Math.max(0, package3.smartBox.currentLoad - 1);
+        await this.smartboxRepository.save(package3.smartBox);
+
+
+        return await this.packageRepository.save(package3);
+    
+    }
+
+    async getUserPackage(userId:number){
+        const userPackage = await this.packageRepository.find({
+            where: {
+                user: {
+                    id: userId
+                }
+            },
+            relations: ["smartBox"],
+            order: {
+                createdAt:"DESC"
+            }
+        });
+
+        return userPackage;
+    }
 
     
 }

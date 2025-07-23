@@ -30,4 +30,8 @@ export class SmartBox {
 
   @UpdateDateColumn()
   updatedAt!: Date;
+
+  @Column({ default: 0 })
+  currentLoad!: number;
+
 }

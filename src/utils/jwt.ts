@@ -1,6 +1,4 @@
 import jwt from "jsonwebtoken";
-
-// dotenv'i burada kullanmana gerek yok, eğer `config/constants.ts` içinde zaten dotenv çağrıldıysa
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export function generateToken(userId: number, email: string, role: string) {

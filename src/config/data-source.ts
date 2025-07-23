@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
-import { User } from '@/entities/User';
-import { Package } from '@/entities/Package';
-import { SmartBox } from '@/entities/SmartBox';
+import { User } from '../entities/User';
+import { Package } from '../entities/Package';
+import { SmartBox } from '../entities/SmartBox';
 import 'dotenv/config';
 
 export const AppDataSource = new DataSource({

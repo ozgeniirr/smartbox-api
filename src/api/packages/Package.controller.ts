@@ -37,7 +37,8 @@ export class PackageController{
                     createdAt: cPackage.createdAt,
                     smartBox: {
                         id: cPackage.smartBox.id,
-                        location: cPackage.smartBox.location
+                        location: cPackage.smartBox.location,
+                        currentLoad: cPackage.smartBox.currentLoad
                     },
                     user: {
                         id: cPackage.user.id,
@@ -79,8 +80,46 @@ export class PackageController{
                 return res.status(500).json({ message: "Sunucu hatası." });
             }
         }
-    
-    
-    
+
+
+        async pickPack( req:Request, res:Response){
+            const packageId = Number(req.params.packageId);
+            const currentUserId = (req as any).user!.userId;
+            if(!packageId){
+                return res.status(400).json({message:"Lütfen paketinizin idsini giriniz."});
+            }
+
+            try{
+
+                const picking = await this.packageService.pickPackage(packageId, currentUserId);
+                const { password: _, ...safeUser } = picking.user;
+                const safePicking = {...picking, user: safeUser,};
+                return res.status(200).json({message:"Paketiniz başarıyla alındı", safePicking});
+                
+            }catch(error:any){
+                if(error.message=== "PACKAGE_NOT_FOUND"){
+                    return res.status(404).json({message:"Paket bulunamadı."})
+                }else if(error.message==="PACKAGE_ALREADY_PICKED"){
+                    return res.status(403).json({message:"Bu paket zaten alındı."});
+                }else if(error.message==="UNAUTHORIZED_PACKAGE_ACCESS"){
+                    return res.status(409).json({message:"Bu paket size ait değil."});
+                }
+
+
+                return res.status(500).json({message:"Sunucu hatası."})
+            }
+
+        }
+
+        async getUserPack( req:Request, res:Response){
+            const userId = (req as any).user!.userId;
+            try {
+                const getUserP = await this.packageService.getUserPackage(userId);
+                return res.status(200).json({message:"Paketleriniz ",
+                    packages: getUserP});
+            }catch(error:any){
+                return res.status(500).json({message:"Sunucu hatası."})
+            }
+        }
     
     }

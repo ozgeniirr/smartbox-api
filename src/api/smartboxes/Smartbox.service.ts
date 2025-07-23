@@ -22,4 +22,52 @@ export class SmartboxService {
         return this.smartboxRepo.save(smartbox1);
     }
 
+    async getAllSmartboxes(){
+        const allSmartboxes = await this.smartboxRepo.find();
+        if(allSmartboxes.length===0){
+            throw new Error("SMARTBOX_NOT_FOUND")
+        }
+
+        return allSmartboxes;
+
+    }
+
+
+    async getSmartbox(smartBoxId:number){
+        const smtbx = await this.smartboxRepo.findOneBy({id:smartBoxId});
+        if(!smtbx){
+            throw new Error("SMTBX_NOT_FOUND")
+        }
+
+        return smtbx;
+    }
+
+    async updateSmartbox(smartBoxId:number, location:string, capacity:number){
+        const smrtbx = await this.smartboxRepo.findOneBy({id:smartBoxId});
+        if(!smrtbx){
+            throw new Error("SMTBXNT")
+        }
+        
+        await this.smartboxRepo.update({
+            id:smartBoxId
+        },
+        {location,
+            capacity
+        });
+        const updatedsmrtbx = await this.smartboxRepo.findOneBy({id:smartBoxId});
+        return updatedsmrtbx;
+
+    }
+
+    async deleteSmartBox(smartboxId:number){
+        const SmartB = await this.smartboxRepo.findOneBy({id:smartboxId});
+        if(!SmartB){
+            throw new Error("SMTBXNF")
+        }
+
+        const deleteSmt = await this.smartboxRepo.remove(SmartB)
+
+        return deleteSmt;
+    }
+
 }

@@ -8,7 +8,8 @@ const router = Router();
 const packageController = new PackageController();
 router.post("/create/:senderId" ,authenticateUser, authorizeRole("admin"), packageController.createPack.bind(packageController));
 router.delete("/:packageId", authenticateUser, authorizeRole("admin"), packageController.deletePack.bind(packageController));
-
+router.patch("/pick/:packageId", authenticateUser, packageController.pickPack.bind(packageController));
+router.get("/me",authenticateUser, packageController.getUserPack.bind(packageController));
 
 
 
