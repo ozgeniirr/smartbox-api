@@ -11,7 +11,7 @@ export class PackageController{
 
 
     async createPack ( req:Request, res:Response){
-        const { senderId } = req.params;
+        const { userId } = req.params;
         const dto = plainToInstance(CreatePackageDto, req.body)
         const errors = await validate(dto);
 
@@ -19,18 +19,18 @@ export class PackageController{
             return res.status(400).json({message:"Lütfen geçerli veri girişi yapınız."})
         }
         try {
-            const numericSenderId = parseInt(senderId);
+            const numericUserId = parseInt(userId);
             const cPackage = await this.packageService.createPackage(
-                numericSenderId,
+                numericUserId,
                 dto.smartboxId,
-                dto.sender,
+                dto.receiver,
                 dto.content
             );
             return res.status(201).json({
                 message: "Paket oluşturuldu.",
                 cPackage: {
                     id: cPackage.id,
-                    sender: cPackage.sender,
+                    receiver: cPackage.receiver,
                     content: cPackage.content,
                     qrCode: cPackage.qrCode,
                     isPickedUp: cPackage.isPickedUp,
@@ -119,6 +119,22 @@ export class PackageController{
                     packages: getUserP});
             }catch(error:any){
                 return res.status(500).json({message:"Sunucu hatası."})
+            }
+        }
+
+        async getUserPacksQr(req:Request, res:Response){
+            const userId = (req as any).user!.userId;
+            try{
+                const getUPQr = await this.packageService.getUsersPackageQr(userId);
+                return res.status(200).json({message:"Paketlerin Qr kodları: ", 
+                    packageQr: getUPQr
+                });
+            }catch(error:any){
+                if(error.message==="PACK_NOT_FOUND"){
+                    return res.status(404).json({message:"Paket bulunamadı."});
+                }
+
+                return res.status(500).json({message:"Sunucu hatası"})
             }
         }
     

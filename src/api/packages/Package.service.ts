@@ -9,7 +9,7 @@ export class PackageService {
     private packageRepository = AppDataSource.getRepository(Package);
     private smartboxRepository = AppDataSource.getRepository(SmartBox);
 
-    async createPackage(userId:number, smartboxId:number, sender: string, content:string){
+    async createPackage(userId:number, smartboxId:number, receiver: string, content:string, ){
         const user = await this.userRepository.findOneBy({id:userId});
         if(!user){
             throw new Error("USER_NOT_FOUND")
@@ -38,7 +38,7 @@ export class PackageService {
         const code = uuidv4(); 
 
         const package1 = await this.packageRepository.create({
-            sender,
+            receiver,
             content,
             user:user,
             smartBox:smartbox,
@@ -49,11 +49,20 @@ export class PackageService {
         
     }
 
-    async deletePackage(packageId:number){
-        const pack = await this.packageRepository.findOneBy({id:packageId});
+    async deletePackage(packageId:number, ){
+        const pack = await this.packageRepository.findOne({
+            where:{id:packageId},
+            relations:["smartBox"]
+        
+        });
         if(!pack){
             throw new Error("PACKAGE_NOT_FOUND")
         }
+        
+        if (pack.smartBox.currentLoad>0){
+            pack.smartBox.currentLoad -=1;
+        }
+        await this.smartboxRepository.save(pack.smartBox);
         await this.packageRepository.remove(pack);
 
         return {message:"Başarıyla silindi."}
@@ -95,6 +104,26 @@ export class PackageService {
                 createdAt:"DESC"
             }
         });
+
+        return userPackage;
+    }
+
+
+    async getUsersPackageQr( userId:number){
+        const userPackage = await this.packageRepository.find({
+            where: {
+                user:{
+                    id:userId,
+                    
+                },
+                isPickedUp: false,
+            },
+            select:[ 'qrCode', 'content', 'createdAt']
+        });
+
+        if(userPackage.length===0){
+            throw new Error("PACK_NOT_FOUND")
+        }
 
         return userPackage;
     }

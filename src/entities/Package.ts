@@ -15,7 +15,7 @@ export class Package {
   id!: number;
 
   @Column()
-  sender!: string;
+  receiver!: string;
 
   @Column()
   content!: string;

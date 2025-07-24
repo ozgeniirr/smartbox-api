@@ -13,6 +13,7 @@ router.patch("/update/:smartboxId", authenticateUser, authorizeRole("admin"), sm
 router.delete("/delete/:smartboxId", authenticateUser, authorizeRole("admin"), smartboxController.deleteSmart.bind(smartboxController));
 
 
+
 export default router;
 
 

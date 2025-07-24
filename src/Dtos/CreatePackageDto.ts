@@ -1,14 +1,16 @@
-import { IsInt, IsPositive, IsString, MinLength } from "class-validator";
+import { IsInt, IsNotEmpty, IsPositive, IsString } from "class-validator";
 
 export class CreatePackageDto {
   @IsString()
-  sender!: string;
+  @IsNotEmpty()
+  receiver!: string;
 
   @IsString()
+  @IsNotEmpty()
   content!: string;
 
   @IsInt()
   @IsPositive()
   smartboxId!: number;
-}
 
+}

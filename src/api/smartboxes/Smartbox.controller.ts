@@ -4,7 +4,7 @@ import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { GetSmartboxDto } from "@/Dtos/GetSmartboxDto";
-import { UpdateSmartboxDto } from "@/Dtos/updateSmartboxDto";
+import { UpdateSmartboxDto } from "@/Dtos/UpdateSmartboxDto";
 
 export class SmartboxController {
     private smartService = new SmartboxService();
@@ -107,6 +107,8 @@ export class SmartboxController {
             console.error(error);
             if(error.message==="SMTBXNF"){
                 return res.status(404).json({message:"SmartBox bulunamadı."})
+            }else if(error.message==="SMARTBOX_HAS_ACTIVE_PACKAGES"){
+                return res.status(409).json({message:"Smartbox ın içinde aktif paket mevcut. "})
             }
 
             return res.status(500).json({message:"Sunucu hatası"})

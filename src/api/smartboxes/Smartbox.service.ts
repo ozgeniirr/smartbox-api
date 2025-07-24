@@ -1,10 +1,12 @@
 import { AppDataSource } from "@/config/data-source";
+import { Package } from "@/entities/Package";
 import { SmartBox } from "@/entities/SmartBox";
 import { User } from "@/entities/User";
 
 export class SmartboxService {
     private userRepo = AppDataSource.getRepository(User);
     private smartboxRepo = AppDataSource.getRepository(SmartBox);
+    private packageRepo = AppDataSource.getRepository(Package);
 
     async createSmartbox(userId:number, location: string, isActive:boolean, capacity:number){
         const user = await this.userRepo.findOneBy({id:userId});
@@ -63,6 +65,16 @@ export class SmartboxService {
         const SmartB = await this.smartboxRepo.findOneBy({id:smartboxId});
         if(!SmartB){
             throw new Error("SMTBXNF")
+        }
+
+        const activePackages = await this.packageRepo.find({
+            where:{
+                smartBox:{ id: smartboxId},
+                isPickedUp: false, 
+            },
+        });
+        if(activePackages.length>0){
+            throw new Error("SMARTBOX_HAS_ACTIVE_PACKAGES")
         }
 
         const deleteSmt = await this.smartboxRepo.remove(SmartB)
