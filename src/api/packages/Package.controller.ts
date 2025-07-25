@@ -3,6 +3,7 @@ import { PackageService } from "./Package.service";
 import { Request, Response } from "express";
 import { CreatePackageDto } from "@/Dtos/CreatePackageDto";
 import { validate } from "class-validator";
+import { BaseError } from "@/errors/BaseErrors";
 
 
 
@@ -48,16 +49,9 @@ export class PackageController{
             });
         }catch(error:any){
             console.error(error);
-            if(error.message==="SMARTBOX_NOT_FOUND"){
-                return res.status(404).json({messsage:"Smarbox bulunamadı"})
-            }else if(error.message==="SMARTBOX_NOT_AVAILABLE"){
-                return res.status(403).json({message:"Smartbox uygun değil."})
-            }else if(error.message==="SMARTBOX_FULL"){
-                return res.status(400).json({message:"Smartbox dolu."})
-            }else if(error.message==="USER_NOT_FOUND"){
-                return res.status(404).json({message:"Kullanıcı bulunamadı."})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
-
             return res.status(500).json({message:"Sunucu hatası."})
             
 
@@ -73,9 +67,9 @@ export class PackageController{
             try {
                 const result = await this.packageService.deletePackage(packageId);
                 return res.status(200).json(result);
-            } catch (err: any) {
-                if (err.message === "PACKAGE_NOT_FOUND") {
-                    return res.status(404).json({ message: "Paket bulunamadı." });
+            } catch (error: any) {
+                if (error instanceof BaseError) {
+                    return res.status(error.statusCode).json({ message: error.message });
                 }
                 return res.status(500).json({ message: "Sunucu hatası." });
             }
@@ -97,15 +91,9 @@ export class PackageController{
                 return res.status(200).json({message:"Paketiniz başarıyla alındı", safePicking});
                 
             }catch(error:any){
-                if(error.message=== "PACKAGE_NOT_FOUND"){
-                    return res.status(404).json({message:"Paket bulunamadı."})
-                }else if(error.message==="PACKAGE_ALREADY_PICKED"){
-                    return res.status(403).json({message:"Bu paket zaten alındı."});
-                }else if(error.message==="UNAUTHORIZED_PACKAGE_ACCESS"){
-                    return res.status(409).json({message:"Bu paket size ait değil."});
+                if (error instanceof BaseError) {
+                    return res.status(error.statusCode).json({ message: error.message });
                 }
-
-
                 return res.status(500).json({message:"Sunucu hatası."})
             }
 
@@ -130,8 +118,8 @@ export class PackageController{
                     packageQr: getUPQr
                 });
             }catch(error:any){
-                if(error.message==="PACK_NOT_FOUND"){
-                    return res.status(404).json({message:"Paket bulunamadı."});
+                if (error instanceof BaseError) {
+                    return res.status(error.statusCode).json({ message: error.message });
                 }
 
                 return res.status(500).json({message:"Sunucu hatası"})

@@ -1,7 +1,11 @@
 import { AppDataSource } from "@/config/data-source";
 import { User } from "@/entities/User";
+import { UserEmailExistsError } from "@/errors/Users/UserEmailExistsError";
 import { generateToken } from "@/utils/jwt";
 import bcrypt from 'bcryptjs';
+import { BaseError } from "@/errors/BaseErrors";
+import { UserNotFound } from "@/errors/Users/UserNotFoundError";
+import { InvalidPassword } from "@/errors/Users/InvalidPasswordError";
         
 
 
@@ -12,9 +16,8 @@ export class AuthService {
         const existingUser = await this.userRepository.findOneBy({email});
 
         if(existingUser){
-            throw new Error("EMAIL_EXIST")
+            throw new UserEmailExistsError();
         }
-
         const hashedPassword = await bcrypt.hash( password, 10);
 
         const user = this.userRepository.create({
@@ -33,12 +36,12 @@ export class AuthService {
     async login ( email:string, password:string){
         const user = await this.userRepository.findOneBy({email});
         if(!user){
-            throw new Error("NO_USER");
+            throw new UserNotFound();
         }
 
          const isPass = await bcrypt.compare(password, user.password)
         if(!isPass){
-            throw new Error("INVALID_PASSWORD")
+            throw new InvalidPassword();
         }
 
         const token = generateToken(user.id, user.email, user.role );

@@ -17,7 +17,6 @@ export function authenticateUser ( req: Request, res:Response, next: NextFunctio
         (req as any).userId = decoded.userId;
         (req as any).role = decoded.role;
 
-
         next();
 
 

@@ -5,6 +5,7 @@ import { validate } from "class-validator";
 import { Request, Response } from "express";
 import { GetSmartboxDto } from "@/Dtos/GetSmartboxDto";
 import { UpdateSmartboxDto } from "@/Dtos/UpdateSmartboxDto";
+import { BaseError } from "@/errors/BaseErrors";
 
 export class SmartboxController {
     private smartService = new SmartboxService();
@@ -23,8 +24,8 @@ export class SmartboxController {
             const smartBox = await this.smartService.createSmartbox(userId, location, isActive, capacity);
             return res.status(201).json({message:"SmartBox oluşturuldu ", smartBox});
         }catch(error:any ){
-            if(error.message==="USER_NOT_FOUND"){
-                return res.status(404).json({message:"Kullanıcı bulunamadı."})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
 
             return res.status(500).json({message:"Sunucu hatası."})
@@ -32,15 +33,16 @@ export class SmartboxController {
 
     }
 
-    async getAllSmartB (res:Response){
+    async getAllSmartB (req: Request, res:Response){
         try{
             const getAll = await this.smartService.getAllSmartboxes()
             return res.status(200).json({message:"Tüm smartbox noktaları: ",
                 smartboxes: getAll})
         }catch(error:any){
-            if(error.message==="SMARTBOX_NOT_FOUND"){
-                return res.status(404).json({message:"Hiç smartbox bulunamadı. "})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
+
 
             return res.status(500).json({message:"Sunucu hatası."})
         }
@@ -58,10 +60,9 @@ export class SmartboxController {
             const getSmrt = await this.smartService.getSmartbox(dto.smartboxId)
             return res.status(200).json({message:"Smartbox: ", smartbox: getSmrt})
         }catch(error:any){
-            if(error.message==="SMTBX_NOT_FOUND"){
-                return res.status(404).json({message:"SmartBox bulunamadı."})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
-
             return res.status(500).json({message:"Sunucu hatası"})
         }
 
@@ -85,8 +86,8 @@ export class SmartboxController {
                 smartbox: updateSmt
             })
         }catch(error:any){
-            if(error.message==="SMTBXNT"){
-                return res.status(404).json({message:"Smartbox bulunamadı."})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
 
             return res.status(500).json({message:"Sunucu hatası."})
@@ -105,10 +106,8 @@ export class SmartboxController {
             return res.status(200).json({message:"SmartBox silindi. "})
         }catch(error:any){
             console.error(error);
-            if(error.message==="SMTBXNF"){
-                return res.status(404).json({message:"SmartBox bulunamadı."})
-            }else if(error.message==="SMARTBOX_HAS_ACTIVE_PACKAGES"){
-                return res.status(409).json({message:"Smartbox ın içinde aktif paket mevcut. "})
+            if (error instanceof BaseError) {
+                return res.status(error.statusCode).json({ message: error.message });
             }
 
             return res.status(500).json({message:"Sunucu hatası"})

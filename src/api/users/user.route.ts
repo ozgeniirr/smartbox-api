@@ -6,7 +6,8 @@ const router = Router();
 
 const userController = new UserController();
 
-router.get('/all', authenticateUser, userController.getAllUsers.bind(userController))
+router.get('/all', authenticateUser, userController.getAllUsers.bind(userController));
+router.get('/profileMe', authenticateUser, userController.getProfileMe.bind(userController));
 
 
 

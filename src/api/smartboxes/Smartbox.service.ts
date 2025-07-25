@@ -2,6 +2,9 @@ import { AppDataSource } from "@/config/data-source";
 import { Package } from "@/entities/Package";
 import { SmartBox } from "@/entities/SmartBox";
 import { User } from "@/entities/User";
+import { SmartBoxNotAvailable } from "@/errors/SmartBox/SmartBoxNotAvailable";
+import { SmartboxNotFoundError } from "@/errors/SmartBox/SmartboxNotFoundError";
+import { UserNotFound } from "@/errors/Users/UserNotFoundError";
 
 export class SmartboxService {
     private userRepo = AppDataSource.getRepository(User);
@@ -11,9 +14,8 @@ export class SmartboxService {
     async createSmartbox(userId:number, location: string, isActive:boolean, capacity:number){
         const user = await this.userRepo.findOneBy({id:userId});
         if(!user){
-            throw new Error("USER_NOT_FOUND")
+            throw new UserNotFound();
         }
-
         const smartbox1 = await this.smartboxRepo.create({
             location,
             isActive,
@@ -27,7 +29,7 @@ export class SmartboxService {
     async getAllSmartboxes(){
         const allSmartboxes = await this.smartboxRepo.find();
         if(allSmartboxes.length===0){
-            throw new Error("SMARTBOX_NOT_FOUND")
+            throw new SmartboxNotFoundError();
         }
 
         return allSmartboxes;
@@ -38,7 +40,7 @@ export class SmartboxService {
     async getSmartbox(smartBoxId:number){
         const smtbx = await this.smartboxRepo.findOneBy({id:smartBoxId});
         if(!smtbx){
-            throw new Error("SMTBX_NOT_FOUND")
+            throw new SmartboxNotFoundError();
         }
 
         return smtbx;
@@ -47,7 +49,7 @@ export class SmartboxService {
     async updateSmartbox(smartBoxId:number, location:string, capacity:number){
         const smrtbx = await this.smartboxRepo.findOneBy({id:smartBoxId});
         if(!smrtbx){
-            throw new Error("SMTBXNT")
+            throw new SmartboxNotFoundError();
         }
         
         await this.smartboxRepo.update({
@@ -64,7 +66,7 @@ export class SmartboxService {
     async deleteSmartBox(smartboxId:number){
         const SmartB = await this.smartboxRepo.findOneBy({id:smartboxId});
         if(!SmartB){
-            throw new Error("SMTBXNF")
+            throw new SmartboxNotFoundError();
         }
 
         const activePackages = await this.packageRepo.find({
@@ -74,9 +76,8 @@ export class SmartboxService {
             },
         });
         if(activePackages.length>0){
-            throw new Error("SMARTBOX_HAS_ACTIVE_PACKAGES")
+            throw new SmartBoxNotAvailable();
         }
-
         const deleteSmt = await this.smartboxRepo.remove(SmartB)
 
         return deleteSmt;

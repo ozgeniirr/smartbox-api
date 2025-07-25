@@ -2,6 +2,13 @@ import { AppDataSource } from "@/config/data-source";
 import { Package } from "@/entities/Package";
 import { SmartBox } from "@/entities/SmartBox";
 import { User } from "@/entities/User";
+import { PackageAlreadyPickedError } from "@/errors/Package/PackageAlreadyPickedError";
+import { PackageNotFoundError } from "@/errors/Package/PackageNotFoundError";
+import { PackageUnauthorizedError } from "@/errors/Package/PackageUnauthorizedError";
+import { SmartBoxFullError } from "@/errors/SmartBox/SmartBoxFullError";
+import { SmartBoxNotAvailable } from "@/errors/SmartBox/SmartBoxNotAvailable";
+import { SmartboxNotFoundError } from "@/errors/SmartBox/SmartboxNotFoundError";
+import { UserNotFound } from "@/errors/Users/UserNotFoundError";
 import { v4 as uuidv4 } from "uuid";
 
 export class PackageService {
@@ -12,15 +19,15 @@ export class PackageService {
     async createPackage(userId:number, smartboxId:number, receiver: string, content:string, ){
         const user = await this.userRepository.findOneBy({id:userId});
         if(!user){
-            throw new Error("USER_NOT_FOUND")
+            throw new UserNotFound();
         }        
         const smartbox = await this.smartboxRepository.findOneBy({id: smartboxId})        
         if (!smartbox) {
-            throw new Error("SMARTBOX_NOT_FOUND");
+            throw new SmartboxNotFoundError();
         }
 
         if(smartbox?.isActive===false){
-            throw new Error("SMARTBOX_NOT_AVAILABLE")
+            throw new SmartBoxNotAvailable();
         }
 
         const currentPackageCount = await this.packageRepository.count({
@@ -28,7 +35,7 @@ export class PackageService {
         });
 
         if (currentPackageCount >= smartbox.capacity){
-            throw new Error("SMARTBOX_FULL");
+            throw new SmartBoxFullError();
         }
 
         smartbox.currentLoad = currentPackageCount + 1;
@@ -56,7 +63,7 @@ export class PackageService {
         
         });
         if(!pack){
-            throw new Error("PACKAGE_NOT_FOUND")
+            throw new PackageNotFoundError();
         }
         
         if (pack.smartBox.currentLoad>0){
@@ -76,12 +83,11 @@ export class PackageService {
         });
 
         if(!package3){
-            throw new Error("PACKAGE_NOT_FOUND")
+            throw new PackageNotFoundError();
         }else if(package3.isPickedUp===true){
-            throw new Error("PACKAGE_ALREADY_PICKED")
-
+            throw new PackageAlreadyPickedError();
         }else if(package3.user.id!==currentUserId){
-            throw new Error("UNAUTHORIZED_PACKAGE_ACCESS")
+            throw new PackageUnauthorizedError();
         }
         package3.isPickedUp = true;
         package3.smartBox.currentLoad = Math.max(0, package3.smartBox.currentLoad - 1);
@@ -122,7 +128,7 @@ export class PackageService {
         });
 
         if(userPackage.length===0){
-            throw new Error("PACK_NOT_FOUND")
+            throw new PackageNotFoundError();
         }
 
         return userPackage;

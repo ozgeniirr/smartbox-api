@@ -4,6 +4,7 @@ import { RegisterDto } from "@/Dtos/AuthDto"
 import { LoginDto } from "@/Dtos/AuthDto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
+import { BaseError } from "@/errors/BaseErrors";
 
 export class AuthController {
   private authService = new AuthService();
@@ -28,10 +29,8 @@ export class AuthController {
         .status(201)
         .json({ message: "Kayıt başarılı.", user: safeUser });
     } catch (error: any) {
-      if (error.message === "EMAIL_EXIST") {
-        return res
-          .status(409)
-          .json({ message: "Bu email zaten kayıtlı." });
+      if (error instanceof BaseError) {
+        return res.status(error.statusCode).json({ message: error.message });
       }
 
       return res.status(500).json({ message: "Sunucu hatası." });
@@ -60,30 +59,12 @@ export class AuthController {
         user: { id, email, role, token },
       });
     } catch (error: any) {
-      if (error.message === "NO_USER") {
-        return res.status(404).json({ message: "Kullanıcı bulunamadı" });
-      } else if (error.message === "INVALID_PASSWORD") {
-        return res.status(401).json({ message: "Yanlış şifre." });
+      if (error instanceof BaseError) {
+        return res.status(error.statusCode).json({ message: error.message });
       }
 
       return res.status(500).json({ message: "Sunucu hatası." });
     }
   }
 
-  profile(req: Request, res: Response) {
-    try {
-      const { email, userId, role } = req as any;
-
-      return res.status(200).json({
-        message: "Profil bilgisi",
-        user: {
-          email,
-          id: userId,
-          role,
-        },
-      });
-    } catch (error: any) {
-      return res.status(500).json({ message: "Sunucu hatası" });
-    }
-  }
 }
