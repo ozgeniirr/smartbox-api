@@ -109,7 +109,7 @@ JWT gerektiren isteklerde `Authorization: Bearer <token>` başlığı eklenmelid
 
 ---
 
-## 📁 Proje Yapısı (Örnek)
+## 📁 Proje Yapısı 
 
 ```
 src/
@@ -124,9 +124,12 @@ src/
 ├── errors/
 ├── middlewares/
 ├── types/
+├── utils/
 ├── server.ts
 └── app.ts
 ```
+
+
 
 ---
 
