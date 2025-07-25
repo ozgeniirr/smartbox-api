@@ -111,7 +111,7 @@ JWT gerektiren isteklerde `Authorization: Bearer <token>` başlığı eklenmelid
 
 ## 📁 Proje Yapısı 
 
-```
+
 src/
 ├── api/
 │   ├── auth/
