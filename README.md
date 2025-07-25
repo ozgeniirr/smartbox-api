@@ -2,7 +2,7 @@
 
 SmartBox API, şehir genelinde kullanılan akıllı kargo dolaplarını (SmartBox) yönetmek için geliştirilmiş bir backend sistemidir.  
 Kuryeler paketleri dolaplara bırakır, kullanıcılar ise QR kod ile dolaptan alım yapar.  
-Bu sistem TypeScript, Express.js ve PostgreSQL kullanılarak geliştirilmiştir.
+Bu sistem `TypeScript`, `Express.js` ve `PostgreSQL` kullanılarak geliştirilmiştir.
 
 ## Güvenlik
 
@@ -13,23 +13,22 @@ Bu sistem TypeScript, Express.js ve PostgreSQL kullanılarak geliştirilmiştir.
 
 ## 🚀 Özellikler
 
-- JWT tabanlı kullanıcı kayıt & giriş (authentication)
+- `JWT` tabanlı kullanıcı kayıt & giriş (authentication)
 - Paket bırakma ve QR kod ile teslim alma
 - SmartBox (akıllı dolap) CRUD işlemleri
 - class-validator ile DTO kontrolü
-- PostgreSQL veritabanı (TypeORM ile)
-- Transaction & hata yönetimi
+- `PostgreSQL` veritabanı (TypeORM ile)
 - Role kontrolü ve middleware desteği
 
 ## 🧰 Kullanılan Teknolojiler
 
-- TypeScript & Node.js
-- Express.js
-- TypeORM
-- PostgreSQL
-- JWT (jsonwebtoken)
-- bcryptjs
-- class-validator / class-transformer
+- `TypeScript & Node.js`
+- `Express.js`
+- `TypeORM`
+- `PostgreSQL`
+- `JWT (jsonwebtoken)`
+- `bcryptjs`
+- `class-validator / class-transformer`
 
 ---
 
