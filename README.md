@@ -37,7 +37,7 @@ Bu sistem TypeScript, Express.js ve PostgreSQL kullanılarak geliştirilmiştir.
 
 1. Reponun klonlanması:
 ```bash
-git clone https://github.com/kullaniciadi/smartbox-api.git
+git clone https://github.com/ozgeniirr/smartbox-api.git
 cd smartbox-api
 ```
 
