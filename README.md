@@ -83,13 +83,12 @@ npm run start:dev
 - `PATCH /smartbox/:id` – Dolap güncelle
 - `DELETE /smartbox/:id` – Dolap sil
 
+```ts
 ## 👩‍💻 Geliştirici Notları
 
 Proje içinde `types/express/index.d.ts` dosyası kullanılarak Express'in `Request` tipine `user` özelliği eklenmiştir.  
 Bu sayede JWT doğrulama sonrası `req.user` üzerinden kullanıcı bilgisi tip güvenli şekilde erişilebilir.
-
-```ts
-// Örnek:
+// Örnek
 req.user?.id
 
 
