@@ -3,7 +3,6 @@ import { User } from "@/entities/User";
 import { UserEmailExistsError } from "@/errors/Users/UserEmailExistsError";
 import { generateToken } from "@/utils/jwt";
 import bcrypt from 'bcryptjs';
-import { BaseError } from "@/errors/BaseErrors";
 import { UserNotFound } from "@/errors/Users/UserNotFoundError";
 import { InvalidPassword } from "@/errors/Users/InvalidPasswordError";
         
