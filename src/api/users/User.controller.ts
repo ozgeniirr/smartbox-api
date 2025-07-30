@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { UserService } from "./User.service";
 import { BaseError } from "@/errors/BaseErrors";
 
-
 export class UserController{
     private userService = new UserService();
 
@@ -38,5 +37,4 @@ export class UserController{
         }
 
     }
-
 }

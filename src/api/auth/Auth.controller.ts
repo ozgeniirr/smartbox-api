@@ -52,6 +52,8 @@ export class AuthController {
 
     try {
       const lUser = await this.authService.login(email, password);
+      console.log("✅ Login başarılı:", lUser); 
+
       const { id, role, token } = lUser;
 
       return res.status(200).json({
@@ -62,8 +64,10 @@ export class AuthController {
       if (error instanceof BaseError) {
         return res.status(error.statusCode).json({ message: error.message });
       }
+      
+      console.error("Login Error:", error);
 
-      return res.status(500).json({ message: "Sunucu hatası." });
+      return res.status(500).json({ message: "Sunucu hatası."})
     }
   }
 
