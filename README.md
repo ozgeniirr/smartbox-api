@@ -250,12 +250,3 @@ Sisteme sadece kayıt olurken girilen email'e OTP gönderilebilir.
 **Amaç:** Kullanıcının sistem dışı email adreslerine OTP göndererek spam oluşumunu engellemek.
 
 ---
-
-### 📤 Commit Önerisi
-
-```bash
-git add README.md
-git add postman/smartbox-api.postman_collection.json
-git commit -m "📝 README + Postman güncellendi: QR teslim, pagination ve OTP güvenliği"
-git push origin main
-```
