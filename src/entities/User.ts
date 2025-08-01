@@ -22,6 +22,9 @@ export class User {
   @Column({ default: "user" }) 
   role!: "admin" | "courier" | "user";
 
+  @Column({ default: false })
+  isVerified!: boolean;
+
   @OneToMany(() => Package, (pkg) => pkg.user)
   packages!: Package[];
 

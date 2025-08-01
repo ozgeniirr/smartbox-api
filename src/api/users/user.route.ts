@@ -11,6 +11,7 @@ router.get('/profileMe', authenticateUser, userController.getProfileMe.bind(user
 
 
 
+
 export default router;
 
 

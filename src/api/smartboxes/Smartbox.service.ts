@@ -5,6 +5,7 @@ import { User } from "@/entities/User";
 import { SmartBoxNotAvailable } from "@/errors/SmartBox/SmartBoxNotAvailable";
 import { SmartboxNotFoundError } from "@/errors/SmartBox/SmartboxNotFoundError";
 import { UserNotFound } from "@/errors/Users/UserNotFoundError";
+import { getPagination, getPaginationMeta } from "@/utils/paginaiton";
 
 export class SmartboxService {
     private userRepo = AppDataSource.getRepository(User);
@@ -26,13 +27,22 @@ export class SmartboxService {
         return this.smartboxRepo.save(smartbox1);
     }
 
-    async getAllSmartboxes(){
-        const allSmartboxes = await this.smartboxRepo.find();
-        if(allSmartboxes.length===0){
+    async getAllSmartboxes(page:number, limit:number){
+        const {skip, take, currentPage} = getPagination(page, limit,);
+        const [smartBoxes, total] = await this.smartboxRepo.findAndCount({
+            where: { isActive: true},
+            order: {id: "ASC"},
+            skip: skip,
+            take:take,
+            select: ["id", "location", "packages", "capacity", "currentLoad"]
+        });
+        if( smartBoxes.length===0){
             throw new SmartboxNotFoundError();
         }
 
-        return allSmartboxes;
+        return{
+            data:smartBoxes,
+            ...getPaginationMeta(total, currentPage, limit)};
 
     }
 

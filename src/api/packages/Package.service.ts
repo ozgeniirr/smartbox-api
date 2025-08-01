@@ -9,6 +9,7 @@ import { SmartBoxFullError } from "@/errors/SmartBox/SmartBoxFullError";
 import { SmartBoxNotAvailable } from "@/errors/SmartBox/SmartBoxNotAvailable";
 import { SmartboxNotFoundError } from "@/errors/SmartBox/SmartboxNotFoundError";
 import { UserNotFound } from "@/errors/Users/UserNotFoundError";
+import { getPagination , getPaginationMeta} from "@/utils/paginaiton";
 import { v4 as uuidv4 } from "uuid";
 
 export class PackageService {
@@ -76,17 +77,17 @@ export class PackageService {
     }
 
 
-    async pickPackage(packageId:number, currentUserId:number){
+    async pickPackage(packageId:number, qrCodeFromBody:string){
         const package3 = await this.packageRepository.findOne({where: {
             id: packageId},
             relations:["user", "smartBox"]
         });
-
         if(!package3){
             throw new PackageNotFoundError();
         }else if(package3.isPickedUp===true){
             throw new PackageAlreadyPickedError();
-        }else if(package3.user.id!==currentUserId){
+        }
+        if(package3.qrCode !== qrCodeFromBody){
             throw new PackageUnauthorizedError();
         }
         package3.isPickedUp = true;
@@ -98,40 +99,41 @@ export class PackageService {
     
     }
 
-    async getUserPackage(userId:number){
-        const userPackage = await this.packageRepository.find({
-            where: {
-                user: {
-                    id: userId
-                }
-            },
+    async getUserPackage(userId:number, page:number, limit: number){
+        const {skip, take, currentPage} = getPagination(page, limit,);
+
+        const [packages, total] = await this.packageRepository.findAndCount({
+            where: {user: {id: userId}},
             relations: ["smartBox"],
-            order: {
-                createdAt:"DESC"
-            }
+            order: {createdAt:"ASC"},
+            skip,
+            take,
         });
-
-        return userPackage;
-    }
-
-
-    async getUsersPackageQr( userId:number){
-        const userPackage = await this.packageRepository.find({
-            where: {
-                user:{
-                    id:userId,
-                    
-                },
-                isPickedUp: false,
-            },
-            select:[ 'qrCode', 'content', 'createdAt']
-        });
-
-        if(userPackage.length===0){
-            throw new PackageNotFoundError();
+        return {
+            data: packages,
+            ...getPaginationMeta(total, currentPage, limit)};
         }
 
-        return userPackage;
+
+    async getUsersPackageQr( userId:number, page:number, limit:number){
+        const {skip, take, currentPage} = getPagination(page, limit,);
+        const [packageQrs, total] = await this.packageRepository.findAndCount({
+            where: {
+                user:{id:userId},
+                isPickedUp: false },
+                order: {id: "ASC"},
+                skip,
+                take,
+            select:[ 'id', 'qrCode', 'content', 'createdAt']
+        });
+
+
+        if(packageQrs.length===0){
+            throw new PackageNotFoundError();
+        }
+        return{
+            data: packageQrs,
+            ...getPaginationMeta(total, currentPage, limit)};
     }
 
     

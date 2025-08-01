@@ -78,14 +78,14 @@ export class PackageController{
 
         async pickPack( req:Request, res:Response){
             const packageId = Number(req.params.packageId);
-            const currentUserId = (req as any).user!.userId;
             if(!packageId){
                 return res.status(400).json({message:"Lütfen paketinizin idsini giriniz."});
             }
 
-            try{
+            const qrCodeFrBody = req.body.qrCode;
 
-                const picking = await this.packageService.pickPackage(packageId, currentUserId);
+            try{
+                const picking = await this.packageService.pickPackage(packageId, qrCodeFrBody);
                 const { password: _, ...safeUser } = picking.user;
                 const safePicking = {...picking, user: safeUser,};
                 return res.status(200).json({message:"Paketiniz başarıyla alındı", safePicking});
@@ -101,8 +101,10 @@ export class PackageController{
 
         async getUserPack( req:Request, res:Response){
             const userId = (req as any).user!.userId;
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 5;
             try {
-                const getUserP = await this.packageService.getUserPackage(userId);
+                const getUserP = await this.packageService.getUserPackage(userId, page, limit);
                 return res.status(200).json({message:"Paketleriniz ",
                     packages: getUserP});
             }catch(error:any){
@@ -112,8 +114,10 @@ export class PackageController{
 
         async getUserPacksQr(req:Request, res:Response){
             const userId = (req as any).user!.userId;
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 5;
             try{
-                const getUPQr = await this.packageService.getUsersPackageQr(userId);
+                const getUPQr = await this.packageService.getUsersPackageQr(userId, page, limit);
                 return res.status(200).json({message:"Paketlerin Qr kodları: ", 
                     packageQr: getUPQr
                 });

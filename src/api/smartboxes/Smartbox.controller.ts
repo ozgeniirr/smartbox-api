@@ -35,7 +35,9 @@ export class SmartboxController {
 
     async getAllSmartB (req: Request, res:Response){
         try{
-            const getAll = await this.smartService.getAllSmartboxes()
+            const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 3;
+            const getAll = await this.smartService.getAllSmartboxes(page, limit)
             return res.status(200).json({message:"Tüm smartbox noktaları: ",
                 smartboxes: getAll})
         }catch(error:any){

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { AuthService } from "./Auth.service";
-import { RegisterDto } from "@/Dtos/AuthDto"
+import { RegisterDto, VerifyOtpDto } from "@/Dtos/AuthDto"
 import { LoginDto } from "@/Dtos/AuthDto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
@@ -27,7 +27,7 @@ export class AuthController {
       const { password: _, ...safeUser } = user;
       return res
         .status(201)
-        .json({ message: "Kayıt başarılı.", user: safeUser });
+        .json({ message: "Lütfen e-posta adresine gelen doğrulama kodunu giriniz. ", user: safeUser });
     } catch (error: any) {
       if (error instanceof BaseError) {
         return res.status(error.statusCode).json({ message: error.message });
@@ -35,6 +35,29 @@ export class AuthController {
 
       return res.status(500).json({ message: "Sunucu hatası." });
     }
+  }
+
+  async verifyOTP(req:Request, res:Response){
+    const dto = plainToInstance(VerifyOtpDto, req.body)
+    const errors = await validate(dto);
+    if(errors.length>0){
+      return res.status(400).json({message:"Lütfen geçerli veri girin. ", errors});
+    }
+
+    const {email, otp } = dto;
+
+    try{
+      await this.authService.verifyOtp(email, otp);
+      return res.status(200).json({message:"Kod doğrulandı giriş yapabilirsiniz. "})
+    }catch(error:any){
+      if (error instanceof BaseError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+
+      return res.status(500).json({message:"Sunucu hatası"})
+
+    }
+
   }
 
   async login(req: Request, res: Response) {
