@@ -1,0 +1,32 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SocketIO Test</title>
+</head>
+<body>
+  <input id="msgInput" placeholder="Mesaj yaz" />
+  <button onclick="send()">Gönder</button>
+  <ul id="chatLog"></ul>
+
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+      console.log("Bağlandı:", socket.id);
+    });
+
+    socket.on("chat", (msg) => {
+      const li = document.createElement("li");
+      li.textContent = msg;
+      document.getElementById("chatLog").appendChild(li);
+    });
+
+    function send() {
+      const msg = document.getElementById("msgInput").value;
+      socket.emit("chat", msg);
+    }
+  </script>
+</body>
+</html>

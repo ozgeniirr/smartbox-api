@@ -1,10 +1,8 @@
 import redisClient from '@/config/redis';
 import nodemailer, { Transporter } from 'nodemailer';
-import { AppDataSource } from '@/config/data-source';
+import { AppDataSource } from '../../config/data-source'
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { User } from '@/entities/User';
-import { UserNotFound } from '@/errors/Users/UserNotFoundError';
-import { EmailNotVerifiedError } from '@/errors/OTP/EmailNotVerifiedError';
 import { EmailNotMatchError } from '@/errors/OTP/EmailNotMAtchError';
 
 export class OtpEmailService {
@@ -43,4 +41,8 @@ export class OtpEmailService {
     console.log("📨 Email gönderildi:", info.messageId);
     console.log("🔗 Önizleme bağlantısı:", nodemailer.getTestMessageUrl(info));
   }
+
+
+
+
 }

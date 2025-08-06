@@ -1,4 +1,4 @@
-import { AppDataSource } from "@/config/data-source";
+import { AppDataSource } from '../../config/data-source'
 import { User } from "@/entities/User";
 import { UserNotFound } from "@/errors/Users/UserNotFoundError";
 import { getPagination, getPaginationMeta } from "@/utils/paginaiton";

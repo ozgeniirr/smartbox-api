@@ -1,4 +1,4 @@
-import { AppDataSource } from "@/config/data-source";
+import { AppDataSource } from '../../config/data-source'
 import { Package } from "@/entities/Package";
 import { SmartBox } from "@/entities/SmartBox";
 import { User } from "@/entities/User";

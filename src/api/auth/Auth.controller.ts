@@ -5,6 +5,10 @@ import { LoginDto } from "@/Dtos/AuthDto";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { BaseError } from "@/errors/BaseErrors";
+import path from "path";
+
+
+
 
 export class AuthController {
   private authService = new AuthService();
@@ -94,4 +98,49 @@ export class AuthController {
     }
   }
 
+
+  /*async register(req: Request, res: Response) {
+    const dto = plainToInstance(RegisterDto, req.body);
+    const errors = await validate(dto);
+
+    if (errors.length > 0) {
+      return res.status(400).json({
+        message: "Geçerli bir e-posta ve şifre giriniz.",
+        errors,
+      });
+    }
+
+    const { email, password } = dto;
+
+    try {
+      const user = await this.authService.register(email, password);
+      const { password: _, ...safeUser } = user;
+      return res
+        .status(201)
+        .json({ message: "Lütfen e-posta adresine gelen doğrulama bağlantısına tıklayınız. ", user: {
+          id: safeUser.id,
+          email: safeUser.email,
+          isVerified: safeUser.isVerified
+        } });
+    } catch (error: any) {
+      if (error instanceof BaseError) {
+        return res.status(error.statusCode).json({ message: error.message });
+      }
+
+      
+      return res.status(500).json({ message: "Sunucu hatası." });
+    }
+  }
+  async verifyEmail(req: Request, res: Response) {
+    const token = req.params.token;
+    try {
+      await this.authService.verifyEmail(token);
+      return res.sendFile(path.join(__dirname, '../../public/verify-success.html'));
+    }catch (error: any) {
+      return res.sendFile(path.join(__dirname, '../../public/verify-failed.html'));
+    }
+
+  }
+*/
+ 
 }
