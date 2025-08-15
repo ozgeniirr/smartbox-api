@@ -1,5 +1,5 @@
 import request from 'supertest';
-import app from '../app'; // senin Express app dosyan
+import app from '../app'; 
 
 describe('Health Check', () => {
   it('GET / should return 200', async () => {
