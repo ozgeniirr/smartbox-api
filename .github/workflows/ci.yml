@@ -1,0 +1,36 @@
+name: Run Tests (SmartBox API)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Copy .env.example to .env (if needed)
+        run: |
+          if [ -f ".env.example" ]; then cp .env.example .env; fi
+
+      - name: Start Docker containers
+        run: docker-compose up -d --build
+
+      - name: Wait for containers to be ready
+        run: sleep 10
+
+      - name: Run tests inside app container
+        run: docker-compose exec -T <servis_adin> npm test
+
+      - name: Shut down Docker containers
+        run: docker-compose down
