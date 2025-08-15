@@ -30,7 +30,7 @@ jobs:
         run: sleep 10
 
       - name: Run tests inside app container
-        run: docker-compose exec -T <servis_adin> npm test
+        run: docker-compose exec -T backend npm test
 
       - name: Shut down Docker containers
         run: docker-compose down
