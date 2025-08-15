@@ -29,8 +29,9 @@ jobs:
       - name: Wait for containers to be ready
         run: sleep 10
 
-      - name: Run tests inside app container
-        run: docker-compose exec -T backend npm test
+      - name: Run tests inside container (safe way)
+        run: docker-compose run --rm backend npm test
+
 
       - name: Shut down Docker containers
         run: docker-compose down
