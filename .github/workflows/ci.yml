@@ -23,15 +23,11 @@ jobs:
         run: |
           if [ -f ".env.example" ]; then cp .env.example .env; fi
 
-      - name: Start Docker containers
-        run: docker-compose up -d --build
+      - name: Build Docker containers
+        run: docker-compose build
 
-      - name: Wait for containers to be ready
-        run: sleep 10
-
-      - name: Run tests inside container (safe way)
+      - name: Run tests inside container
         run: docker-compose run --rm backend npm test
-
 
       - name: Shut down Docker containers
         run: docker-compose down
